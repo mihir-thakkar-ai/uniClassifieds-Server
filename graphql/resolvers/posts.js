@@ -57,7 +57,7 @@ module.exports = {
 
       try {
         const post = await Post.findById(postId);
-        if(!post) throw new Error("Post not found");
+        if (!post) throw new Error("Post not found");
         if (user.id === post.user) {
           await post.delete();
           return "Post deleted successfully";
@@ -72,9 +72,10 @@ module.exports = {
       let returnMessage = "Interest conveyed to the seller";
       const { id, email } = checkAuth(context);
       const post = await Post.findById(postId);
+      console.log(post.user, id);
       if (!post) throw new Error("Sorry, this post no longer exists..");
 
-      if (post.user === id) {
+      if (post.user == id) {
         throw new Error("You cannot convey interest on your own post");
       }
 
