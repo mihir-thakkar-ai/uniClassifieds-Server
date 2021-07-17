@@ -57,7 +57,8 @@ module.exports = {
 
       try {
         const post = await Post.findById(postId);
-        if (user.username === post.username) {
+        if(!post) throw new Error("Post not found");
+        if (user.id === post.user) {
           await post.delete();
           return "Post deleted successfully";
         } else {
@@ -68,10 +69,13 @@ module.exports = {
       }
     },
     async conveyInterest(_, { postId }, context) {
-      const { email, user } = checkAuth(context);
+      let returnMessage = "Interest conveyed to the seller";
+      const { id, email } = checkAuth(context);
       const post = await Post.findById(postId);
-      if(post.user === user) {
-          throw new Error("You cannot convey interest on your own post");
+      if (!post) throw new Error("Sorry, this post no longer exists..");
+
+      if (post.user === id) {
+        throw new Error("You cannot convey interest on your own post");
       }
 
       if (post) {
@@ -80,6 +84,7 @@ module.exports = {
           post.interestedUsers = post.interestedUsers.filter(
             (like) => like.email !== email
           );
+          returnMessage = "Interest uncoveyed.";
         } else {
           // Not liked, like it
           post.interestedUsers.push({
@@ -88,7 +93,7 @@ module.exports = {
           });
         }
         await post.save();
-        return post;
+        return returnMessage;
       } else throw new UserInputError("Post not found");
     },
   },

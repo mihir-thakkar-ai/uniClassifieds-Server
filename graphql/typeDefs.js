@@ -14,7 +14,6 @@ module.exports = gql`
     id: ID!
     createdAt: String!
     email: String!
-    postId: String!
   }
 
   type Post {
